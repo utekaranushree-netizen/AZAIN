@@ -1,0 +1,638 @@
+Null display is "(null)".
+BEGIN
+CREATE TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+  column_name  |     data_type     | is_nullable | column_default 
+---------------+-------------------+-------------+----------------
+ feedback_id   | integer           | NO          | (null)
+ product_id    | integer           | NO          | (null)
+ customer_id   | integer           | YES         | (null)
+ rating        | integer           | NO          | (null)
+ feedback_text | character varying | YES         | (null)
+ given_on      | date              | NO          | CURRENT_DATE
+(6 rows)
+
+DROP TABLE
+ROLLBACK
+      table_name      |           constraint_name            |    type     |                                                                   definition                                                                   
+----------------------+--------------------------------------+-------------+------------------------------------------------------------------------------------------------------------------------------------------------
+ categories           | categories_pkey                      | PRIMARY KEY | PRIMARY KEY (category_id)
+ categories           | categories_category_name_key         | UNIQUE      | UNIQUE (category_name)
+ customers            | customers_loyalty_points_check       | CHECK       | CHECK ((loyalty_points >= 0))
+ customers            | customers_pkey                       | PRIMARY KEY | PRIMARY KEY (customer_id)
+ customers            | customers_email_key                  | UNIQUE      | UNIQUE (email)
+ customers            | customers_phone_key                  | UNIQUE      | UNIQUE (phone)
+ employees            | employees_salary_check               | CHECK       | CHECK ((salary > (0)::numeric))
+ employees            | employees_role_check                 | CHECK       | CHECK (((role)::text = ANY ((ARRAY['Manager'::character varying, 'Cashier'::character varying, 'Storekeeper'::character varying])::text[])))
+ employees            | employees_pkey                       | PRIMARY KEY | PRIMARY KEY (emp_id)
+ order_items          | order_items_quantity_check           | CHECK       | CHECK ((quantity > 0))
+ order_items          | order_items_product_id_fkey          | FOREIGN KEY | FOREIGN KEY (product_id) REFERENCES products(product_id)
+ order_items          | order_items_order_id_fkey            | FOREIGN KEY | FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
+ order_items          | order_items_pkey                     | PRIMARY KEY | PRIMARY KEY (item_id)
+ orders               | orders_discount_percent_check        | CHECK       | CHECK (((discount_percent >= (0)::numeric) AND (discount_percent <= (50)::numeric)))
+ orders               | orders_status_check                  | CHECK       | CHECK (((status)::text = ANY ((ARRAY['Pending'::character varying, 'Completed'::character varying, 'Cancelled'::character varying])::text[])))
+ orders               | orders_request_key_check             | CHECK       | CHECK (((request_key)::text ~ '^[A-Za-z0-9_-]{8,64}$'::text))
+ orders               | orders_customer_id_fkey              | FOREIGN KEY | FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+ orders               | orders_emp_id_fkey                   | FOREIGN KEY | FOREIGN KEY (emp_id) REFERENCES employees(emp_id)
+ orders               | orders_pkey                          | PRIMARY KEY | PRIMARY KEY (order_id)
+ orders               | orders_request_key_key               | UNIQUE      | UNIQUE (request_key)
+ payments             | payments_amount_check                | CHECK       | CHECK ((amount > (0)::numeric))
+ payments             | payments_method_check                | CHECK       | CHECK (((method)::text = ANY ((ARRAY['Cash'::character varying, 'Card'::character varying, 'UPI'::character varying])::text[])))
+ payments             | payments_order_id_fkey               | FOREIGN KEY | FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
+ payments             | payments_pkey                        | PRIMARY KEY | PRIMARY KEY (payment_id)
+ payments             | uq_payments_order                    | UNIQUE      | UNIQUE (order_id)
+ products             | products_price_check                 | CHECK       | CHECK ((price >= (0)::numeric))
+ products             | products_cost_price_check            | CHECK       | CHECK ((cost_price >= (0)::numeric))
+ products             | products_stock_qty_check             | CHECK       | CHECK ((stock_qty >= 0))
+ products             | products_reorder_level_check         | CHECK       | CHECK ((reorder_level >= 0))
+ products             | products_check                       | CHECK       | CHECK ((price >= cost_price))
+ products             | products_supplier_id_fkey            | FOREIGN KEY | FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id)
+ products             | products_category_id_fkey            | FOREIGN KEY | FOREIGN KEY (category_id) REFERENCES categories(category_id)
+ products             | products_pkey                        | PRIMARY KEY | PRIMARY KEY (product_id)
+ purchase_order_items | purchase_order_items_unit_cost_check | CHECK       | CHECK ((unit_cost >= (0)::numeric))
+ purchase_order_items | purchase_order_items_quantity_check  | CHECK       | CHECK ((quantity > 0))
+ purchase_order_items | purchase_order_items_product_id_fkey | FOREIGN KEY | FOREIGN KEY (product_id) REFERENCES products(product_id)
+ purchase_order_items | purchase_order_items_po_id_fkey      | FOREIGN KEY | FOREIGN KEY (po_id) REFERENCES purchase_orders(po_id) ON DELETE CASCADE
+ purchase_order_items | purchase_order_items_pkey            | PRIMARY KEY | PRIMARY KEY (po_item_id)
+ purchase_orders      | purchase_orders_status_check         | CHECK       | CHECK (((status)::text = ANY ((ARRAY['Ordered'::character varying, 'Received'::character varying, 'Cancelled'::character varying])::text[])))
+ purchase_orders      | purchase_orders_supplier_id_fkey     | FOREIGN KEY | FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id)
+ purchase_orders      | purchase_orders_pkey                 | PRIMARY KEY | PRIMARY KEY (po_id)
+ stock_log            | stock_log_product_id_fkey            | FOREIGN KEY | FOREIGN KEY (product_id) REFERENCES products(product_id)
+ stock_log            | stock_log_pkey                       | PRIMARY KEY | PRIMARY KEY (log_id)
+ suppliers            | suppliers_pkey                       | PRIMARY KEY | PRIMARY KEY (supplier_id)
+ suppliers            | suppliers_email_key                  | UNIQUE      | UNIQUE (email)
+(45 rows)
+
+BEGIN
+INSERT 0 1
+INSERT 0 1
+UPDATE 2
+UPDATE 1
+DELETE 1
+DELETE 1
+DELETE 1
+    tbl    | count 
+-----------+-------
+ products  |    15
+ customers |     9
+ employees |     5
+ suppliers |     5
+(4 rows)
+
+ROLLBACK
+psql:/home/claude/stationary-shop/database/dbms_queries.sql:106: NOTICE:  DELETE blocked by foreign key: update or delete on table "customers" violates foreign key constraint "orders_customer_id_fkey" on table "orders"
+DO
+ product_id |        product_name         |  brand  | price  | stock_qty 
+------------+-----------------------------+---------+--------+-----------
+         10 | Transparent File Folder     | Solo    |  15.00 |       115
+          2 | Gel Pen Black               | Pilot   |  20.00 |       146
+         12 | Steel Ruler 30 cm           | Kangaro |  25.00 |         2
+         14 | Sticky Notes Pad            | Solo    |  30.00 |        12
+          4 | Permanent Marker            | Camlin  |  40.00 |        80
+          5 | Notebook 200 Pages          | Navneet |  55.00 |       200
+          3 | HB Pencil (Box of 10)       | Camlin  |  60.00 |        14
+         13 | Highlighter Set (4 colours) | Camlin  |  70.00 |        79
+          9 | Stapler Medium              | Kangaro |  85.00 |        52
+          1 | Ball Pen Blue (Pack of 10)  | Pilot   |  90.00 |       134
+          7 | Sketch Book A3              | Camlin  | 110.00 |        52
+         11 | Geometry Box                | Camlin  | 140.00 |        52
+          8 | Water Colour Set (24)       | Camlin  | 180.00 |        31
+          6 | A4 Paper Ream (500 sheets)  | JK      | 290.00 |        47
+(14 rows)
+
+        product_name         | price  
+-----------------------------+--------
+ Water Colour Set (24)       | 180.00
+ Geometry Box                | 140.00
+ Sketch Book A3              | 110.00
+ Highlighter Set (4 colours) |  70.00
+ HB Pencil (Box of 10)       |  60.00
+(5 rows)
+
+        product_name        | price 
+----------------------------+-------
+ HB Pencil (Box of 10)      | 60.00
+ Gel Pen Black              | 20.00
+ Ball Pen Blue (Pack of 10) | 90.00
+(3 rows)
+
+        product_name         | price  
+-----------------------------+--------
+ Ball Pen Blue (Pack of 10)  |  90.00
+ Geometry Box                | 140.00
+ HB Pencil (Box of 10)       |  60.00
+ Highlighter Set (4 colours) |  70.00
+ Notebook 200 Pages          |  55.00
+ Sketch Book A3              | 110.00
+ Stapler Medium              |  85.00
+(7 rows)
+
+   customer_name    | city  
+--------------------+-------
+ Greenfield Academy | Thane
+ Rohan Patil        | Pune
+ Meera Iyer         | Thane
+ Sneha Kulkarni     | Pune
+(4 rows)
+
+ order_id |         order_date         |  status   
+----------+----------------------------+-----------
+        4 | 2026-09-15 15:44:12.714088 | Completed
+        9 | 2026-10-20 15:44:12.714088 | Completed
+       13 | 2026-10-25 15:44:12.714088 | Completed
+(3 rows)
+
+ total_products | total_units | avg_price | cheapest | dearest 
+----------------+-------------+-----------+----------+---------
+             14 |        1016 |     86.43 |    15.00 |  290.00
+(1 row)
+
+ category_name | products | units_in_stock 
+---------------+----------+----------------
+ Writing       |        5 |            453
+ Paper         |        2 |            247
+ Office        |        3 |            179
+ Art & Craft   |        2 |             83
+ Geometry      |        2 |             54
+(5 rows)
+
+ category_name | avg_price 
+---------------+-----------
+ Paper         |    172.50
+ Art & Craft   |    145.00
+ Geometry      |     82.50
+(3 rows)
+
+ customer_id | orders_placed 
+-------------+---------------
+           2 |             2
+(1 row)
+
+  status   | orders 
+-----------+--------
+ Completed |     12
+ Pending   |      1
+ Cancelled |      1
+(3 rows)
+
+ product_id |        product_name         | category_name |    supplier_name     
+------------+-----------------------------+---------------+----------------------
+          7 | Sketch Book A3              | Art & Craft   | Camlin Supplies
+          8 | Water Colour Set (24)       | Art & Craft   | Camlin Supplies
+         11 | Geometry Box                | Geometry      | Camlin Supplies
+         12 | Steel Ruler 30 cm           | Geometry      | Office Mart
+          9 | Stapler Medium              | Office        | Office Mart
+         14 | Sticky Notes Pad            | Office        | Classmate Wholesale
+         10 | Transparent File Folder     | Office        | Office Mart
+          6 | A4 Paper Ream (500 sheets)  | Paper         | Navneet Distributors
+          5 | Notebook 200 Pages          | Paper         | Navneet Distributors
+          1 | Ball Pen Blue (Pack of 10)  | Writing       | Pilot Traders
+          2 | Gel Pen Black               | Writing       | Pilot Traders
+          3 | HB Pencil (Box of 10)       | Writing       | Camlin Supplies
+         13 | Highlighter Set (4 colours) | Writing       | Camlin Supplies
+          4 | Permanent Marker            | Writing       | Camlin Supplies
+(14 rows)
+
+   customer_name    | orders 
+--------------------+--------
+ Diya Mehta         |      2
+ Rohan Patil        |      2
+ Aarav Shah         |      1
+ Greenfield Academy |      1
+ Kabir Singh        |      1
+ Meera Iyer         |      1
+ Sneha Kulkarni     |      1
+ St. Xavier School  |      1
+ Vikram Joshi       |      1
+ Neha Gupta         |      0
+(10 rows)
+
+ order_id |      customer      |    served_by    
+----------+--------------------+-----------------
+        1 | Aarav Shah         | Pooja Desai
+        2 | Diya Mehta         | Pooja Desai
+        3 | Greenfield Academy | Suresh Kulkarni
+        4 | Walk-in            | Rahul Pawar
+        5 | Rohan Patil        | Rahul Pawar
+        6 | Meera Iyer         | Anjali Sharma
+        7 | St. Xavier School  | Suresh Kulkarni
+        8 | Kabir Singh        | Pooja Desai
+        9 | Walk-in            | Anjali Sharma
+       10 | Sneha Kulkarni     | Rahul Pawar
+       11 | Vikram Joshi       | Rahul Pawar
+       12 | Diya Mehta         | Anjali Sharma
+       13 | Walk-in            | Pooja Desai
+       14 | Rohan Patil        | Rahul Pawar
+(14 rows)
+
+ order_id |        product_name        | quantity | unit_price | line_total | discount_percent | payable | method 
+----------+----------------------------+----------+------------+------------+------------------+---------+--------
+        3 | HB Pencil (Box of 10)      |       20 |      60.00 |    1200.00 |            10.00 | 7020.00 | Cash
+        3 | Transparent File Folder    |      100 |      15.00 |    1500.00 |            10.00 | 7020.00 | Cash
+        3 | A4 Paper Ream (500 sheets) |       10 |     290.00 |    2900.00 |            10.00 | 7020.00 | Cash
+        3 | Notebook 200 Pages         |       40 |      55.00 |    2200.00 |            10.00 | 7020.00 | Cash
+(4 rows)
+
+    supplier_name     |        product_name         
+----------------------+-----------------------------
+ Camlin Supplies      | Geometry Box
+ Camlin Supplies      | HB Pencil (Box of 10)
+ Camlin Supplies      | Highlighter Set (4 colours)
+ Camlin Supplies      | Permanent Marker
+ Camlin Supplies      | Sketch Book A3
+ Camlin Supplies      | Water Colour Set (24)
+ Classmate Wholesale  | Sticky Notes Pad
+ Kangaro Industries   | (null)
+ Navneet Distributors | A4 Paper Ream (500 sheets)
+ Navneet Distributors | Notebook 200 Pages
+ Office Mart          | Stapler Medium
+ Office Mart          | Steel Ruler 30 cm
+ Office Mart          | Transparent File Folder
+ Pilot Traders        | Ball Pen Blue (Pack of 10)
+ Pilot Traders        | Gel Pen Black
+(15 rows)
+
+        product_name        | price  
+----------------------------+--------
+ A4 Paper Ream (500 sheets) | 290.00
+ Water Colour Set (24)      | 180.00
+ Geometry Box               | 140.00
+ Sketch Book A3             | 110.00
+ Ball Pen Blue (Pack of 10) |  90.00
+(5 rows)
+
+ customer_name 
+---------------
+ Kabir Singh
+ Diya Mehta
+(2 rows)
+
+   product_name   
+------------------
+ Permanent Marker
+ Sticky Notes Pad
+(2 rows)
+
+        product_name         | stock_qty | category_avg 
+-----------------------------+-----------+--------------
+ A4 Paper Ream (500 sheets)  |        47 |        123.5
+ Ball Pen Blue (Pack of 10)  |       134 |         90.6
+ Gel Pen Black               |       146 |         90.6
+ Geometry Box                |        52 |         27.0
+ HB Pencil (Box of 10)       |        14 |         90.6
+ Highlighter Set (4 colours) |        79 |         90.6
+ Notebook 200 Pages          |       200 |        123.5
+ Permanent Marker            |        80 |         90.6
+ Sketch Book A3              |        52 |         41.5
+ Stapler Medium              |        52 |         59.7
+ Steel Ruler 30 cm           |         2 |         27.0
+ Sticky Notes Pad            |        12 |         59.7
+ Transparent File Folder     |       115 |         59.7
+ Water Colour Set (24)       |        31 |         41.5
+(14 rows)
+
+ emp_id | orders_handled 
+--------+----------------
+      2 |              4
+(1 row)
+
+ order_id | payable 
+----------+---------
+        7 | 7695.00
+(1 row)
+
+     product_name      | stock_qty | reorder_level | shortfall 
+-----------------------+-----------+---------------+-----------
+ Steel Ruler 30 cm     |         2 |            15 |        13
+ Sticky Notes Pad      |        12 |            20 |         8
+ HB Pencil (Box of 10) |        14 |            15 |         1
+(3 rows)
+
+  month  | orders | total_sales 
+---------+--------+-------------
+ 2026-08 |      2 |      855.50
+ 2026-09 |      4 |     8492.75
+ 2026-10 |      6 |    11035.00
+(3 rows)
+
+ category_name | revenue 
+---------------+---------
+ Paper         | 9270.00
+ Writing       | 6080.00
+ Office        | 3705.00
+ Geometry      | 1970.00
+ Art & Craft   | 1050.00
+(5 rows)
+
+   customer_name    | orders_placed | total_spent | loyalty_points 
+--------------------+---------------+-------------+----------------
+ St. Xavier School  |             1 |     7695.00 |             76
+ Greenfield Academy |             1 |     7020.00 |             70
+ Sneha Kulkarni     |             1 |      945.00 |              9
+ Kabir Singh        |             1 |      860.00 |              8
+ Diya Mehta         |             2 |      780.50 |              7
+(5 rows)
+
+    emp_name     |    role     | orders_handled | sales_value 
+-----------------+-------------+----------------+-------------
+ Pooja Desai     | Cashier     |              4 |     2580.50
+ Rahul Pawar     | Cashier     |              3 |     1710.00
+ Anjali Sharma   | Cashier     |              3 |     1377.75
+ Suresh Kulkarni | Manager     |              2 |    14715.00
+ Vijay More      | Storekeeper |              0 |        0.00
+ Mahesh Naik     | Storekeeper |              0 |        0.00
+(6 rows)
+
+ value_at_cost | value_at_selling_price 
+---------------+------------------------
+      49311.00 |               74315.00
+(1 row)
+
+        product_name         | units_sold | profit  
+-----------------------------+------------+---------
+ Notebook 200 Pages          |        100 | 2000.00
+ Transparent File Folder     |        230 | 1610.00
+ HB Pencil (Box of 10)       |         64 | 1280.00
+ A4 Paper Ream (500 sheets)  |         13 |  910.00
+ Geometry Box                |         13 |  650.00
+ Gel Pen Black               |         64 |  512.00
+ Water Colour Set (24)       |          4 |  240.00
+ Ball Pen Blue (Pack of 10)  |          6 |  180.00
+ Highlighter Set (4 colours) |          6 |  150.00
+ Sketch Book A3              |          3 |  120.00
+ Stapler Medium              |          3 |   90.00
+ Steel Ruler 30 cm           |          6 |   66.00
+(12 rows)
+
+ method | payments |  total   
+--------+----------+----------
+ Card   |        5 | 10055.00
+ Cash   |        4 |  8397.75
+ UPI    |        3 |  1930.50
+(3 rows)
+
+ po_id |    supplier_name     |  po_date   |  status   | po_value 
+-------+----------------------+------------+-----------+----------
+     1 | Office Mart          | 2026-08-26 | Received  |  1500.00
+     2 | Navneet Distributors | 2026-09-10 | Received  |  7900.00
+     3 | Camlin Supplies      | 2026-09-15 | Received  |  1050.00
+     4 | Pilot Traders        | 2026-09-25 | Received  |  3120.00
+     5 | Camlin Supplies      | 2026-10-03 | Received  |  1700.00
+     6 | Office Mart          | 2026-10-10 | Received  |  1800.00
+     7 | Camlin Supplies      | 2026-10-16 | Received  |  2050.00
+     8 | Office Mart          | 2026-10-21 | Ordered   |  1280.00
+     9 | Navneet Distributors | 2026-10-23 | Ordered   |  2800.00
+    10 | Pilot Traders        | 2026-10-24 | Cancelled |  3000.00
+(10 rows)
+
+ order_id | discount_percent | payable 
+----------+------------------+---------
+        1 |             0.00 |  485.00
+        2 |             5.00 |  370.50
+        3 |            10.00 | 7020.00
+        4 |             0.00 |   65.00
+        5 |             0.00 |  700.00
+        6 |             5.00 |  707.75
+        7 |            10.00 | 7695.00
+        8 |             0.00 |  860.00
+        9 |             0.00 |  260.00
+       10 |             0.00 |  945.00
+       11 |             0.00 |  725.00
+       12 |             0.00 |  410.00
+       13 |             0.00 |  865.00
+       14 |             0.00 |  195.00
+(14 rows)
+
+ order_id | order_date |      customer      |    served_by    | gross_amount | discount_percent | net_amount |  status   
+----------+------------+--------------------+-----------------+--------------+------------------+------------+-----------
+        1 | 2026-08-11 | Aarav Shah         | Pooja Desai     |       485.00 |             0.00 |     485.00 | Completed
+        2 | 2026-08-24 | Diya Mehta         | Pooja Desai     |       390.00 |             5.00 |     370.50 | Completed
+        3 | 2026-09-07 | Greenfield Academy | Suresh Kulkarni |      7800.00 |            10.00 |    7020.00 | Completed
+        4 | 2026-09-15 | Walk-in            | Rahul Pawar     |        65.00 |             0.00 |      65.00 | Completed
+        5 | 2026-09-22 | Rohan Patil        | Rahul Pawar     |       700.00 |             0.00 |     700.00 | Completed
+        6 | 2026-09-30 | Meera Iyer         | Anjali Sharma   |       745.00 |             5.00 |     707.75 | Completed
+        7 | 2026-10-07 | St. Xavier School  | Suresh Kulkarni |      8550.00 |            10.00 |    7695.00 | Completed
+        8 | 2026-10-15 | Kabir Singh        | Pooja Desai     |       860.00 |             0.00 |     860.00 | Completed
+        9 | 2026-10-20 | Walk-in            | Anjali Sharma   |       260.00 |             0.00 |     260.00 | Completed
+       10 | 2026-10-22 | Sneha Kulkarni     | Rahul Pawar     |       945.00 |             0.00 |     945.00 | Completed
+       11 | 2026-10-23 | Vikram Joshi       | Rahul Pawar     |       725.00 |             0.00 |     725.00 | Cancelled
+       12 | 2026-10-24 | Diya Mehta         | Anjali Sharma   |       410.00 |             0.00 |     410.00 | Completed
+       13 | 2026-10-25 | Walk-in            | Pooja Desai     |       865.00 |             0.00 |     865.00 | Completed
+       14 | 2026-10-25 | Rohan Patil        | Rahul Pawar     |       195.00 |             0.00 |     195.00 | Pending
+(14 rows)
+
+ product_id |     product_name      | category_name | stock_qty | reorder_level |    supplier_name    | supplier_phone 
+------------+-----------------------+---------------+-----------+---------------+---------------------+----------------
+          3 | HB Pencil (Box of 10) | Writing       |        14 |            15 | Camlin Supplies     | 9820022222
+         14 | Sticky Notes Pad      | Office        |        12 |            20 | Classmate Wholesale | 9820055555
+         12 | Steel Ruler 30 cm     | Geometry      |         2 |            15 | Office Mart         | 9820044444
+(3 rows)
+
+ product_id |        product_name        | units_sold | revenue 
+------------+----------------------------+------------+---------
+         10 | Transparent File Folder    |        230 | 3450.00
+          5 | Notebook 200 Pages         |        100 | 5500.00
+          3 | HB Pencil (Box of 10)      |         64 | 3840.00
+          2 | Gel Pen Black              |         64 | 1280.00
+          6 | A4 Paper Ream (500 sheets) |         13 | 3770.00
+(5 rows)
+
+   month    | total_orders | total_sales 
+------------+--------------+-------------
+ 2026-08-01 |            2 |      855.50
+ 2026-09-01 |            4 |     8492.75
+ 2026-10-01 |            6 |    11035.00
+(3 rows)
+
+ customer_id |   customer_name    | loyalty_points | orders_placed | total_spent 
+-------------+--------------------+----------------+---------------+-------------
+           4 | St. Xavier School  |             76 |             1 |     7695.00
+           8 | Greenfield Academy |             70 |             1 |     7020.00
+           7 | Sneha Kulkarni     |              9 |             1 |      945.00
+           6 | Kabir Singh        |              8 |             1 |      860.00
+           2 | Diya Mehta         |              7 |             2 |      780.50
+           5 | Meera Iyer         |              7 |             1 |      707.75
+           3 | Rohan Patil        |              7 |             1 |      700.00
+           1 | Aarav Shah         |              4 |             1 |      485.00
+          10 | Neha Gupta         |              0 |             0 |        0.00
+           9 | Vikram Joshi       |              0 |             0 |        0.00
+(10 rows)
+
+      tablename       |          indexname           |                                               indexdef                                                
+----------------------+------------------------------+-------------------------------------------------------------------------------------------------------
+ categories           | categories_category_name_key | CREATE UNIQUE INDEX categories_category_name_key ON public.categories USING btree (category_name)
+ categories           | categories_pkey              | CREATE UNIQUE INDEX categories_pkey ON public.categories USING btree (category_id)
+ customers            | customers_email_key          | CREATE UNIQUE INDEX customers_email_key ON public.customers USING btree (email)
+ customers            | customers_phone_key          | CREATE UNIQUE INDEX customers_phone_key ON public.customers USING btree (phone)
+ customers            | customers_pkey               | CREATE UNIQUE INDEX customers_pkey ON public.customers USING btree (customer_id)
+ employees            | employees_pkey               | CREATE UNIQUE INDEX employees_pkey ON public.employees USING btree (emp_id)
+ order_items          | idx_items_order              | CREATE INDEX idx_items_order ON public.order_items USING btree (order_id)
+ order_items          | idx_items_product            | CREATE INDEX idx_items_product ON public.order_items USING btree (product_id)
+ order_items          | order_items_pkey             | CREATE UNIQUE INDEX order_items_pkey ON public.order_items USING btree (item_id)
+ orders               | idx_orders_customer          | CREATE INDEX idx_orders_customer ON public.orders USING btree (customer_id)
+ orders               | idx_orders_date              | CREATE INDEX idx_orders_date ON public.orders USING btree (order_date)
+ orders               | orders_pkey                  | CREATE UNIQUE INDEX orders_pkey ON public.orders USING btree (order_id)
+ orders               | orders_request_key_key       | CREATE UNIQUE INDEX orders_request_key_key ON public.orders USING btree (request_key)
+ payments             | idx_payments_order           | CREATE INDEX idx_payments_order ON public.payments USING btree (order_id)
+ payments             | payments_pkey                | CREATE UNIQUE INDEX payments_pkey ON public.payments USING btree (payment_id)
+ payments             | uq_payments_order            | CREATE UNIQUE INDEX uq_payments_order ON public.payments USING btree (order_id)
+ products             | idx_low_stock                | CREATE INDEX idx_low_stock ON public.products USING btree (stock_qty) WHERE (stock_qty <= 10)
+ products             | idx_products_category        | CREATE INDEX idx_products_category ON public.products USING btree (category_id)
+ products             | idx_products_name            | CREATE INDEX idx_products_name ON public.products USING btree (product_name)
+ products             | idx_products_supplier        | CREATE INDEX idx_products_supplier ON public.products USING btree (supplier_id)
+ products             | products_pkey                | CREATE UNIQUE INDEX products_pkey ON public.products USING btree (product_id)
+ purchase_order_items | idx_po_items_po              | CREATE INDEX idx_po_items_po ON public.purchase_order_items USING btree (po_id)
+ purchase_order_items | purchase_order_items_pkey    | CREATE UNIQUE INDEX purchase_order_items_pkey ON public.purchase_order_items USING btree (po_item_id)
+ purchase_orders      | idx_po_supplier              | CREATE INDEX idx_po_supplier ON public.purchase_orders USING btree (supplier_id)
+ purchase_orders      | purchase_orders_pkey         | CREATE UNIQUE INDEX purchase_orders_pkey ON public.purchase_orders USING btree (po_id)
+ stock_log            | idx_stock_log_product        | CREATE INDEX idx_stock_log_product ON public.stock_log USING btree (product_id, logged_at)
+ stock_log            | stock_log_pkey               | CREATE UNIQUE INDEX stock_log_pkey ON public.stock_log USING btree (log_id)
+ suppliers            | suppliers_email_key          | CREATE UNIQUE INDEX suppliers_email_key ON public.suppliers USING btree (email)
+ suppliers            | suppliers_pkey               | CREATE UNIQUE INDEX suppliers_pkey ON public.suppliers USING btree (supplier_id)
+(29 rows)
+
+                                    QUERY PLAN                                    
+----------------------------------------------------------------------------------
+ Bitmap Heap Scan on orders  (cost=4.16..9.50 rows=2 width=226)
+   Recheck Cond: (customer_id = 3)
+   ->  Bitmap Index Scan on idx_orders_customer  (cost=0.00..4.16 rows=2 width=0)
+         Index Cond: (customer_id = 3)
+(4 rows)
+
+BEGIN
+ product_id | stock_qty 
+------------+-----------
+          4 |        80
+(1 row)
+
+INSERT 0 1
+INSERT 0 1
+ product_id | stock_qty 
+------------+-----------
+          4 |        77
+(1 row)
+
+ log_id | product_id | change_qty | reason |         logged_at          
+--------+------------+------------+--------+----------------------------
+     67 |          4 |         -3 | Sale   | 2026-10-25 15:44:13.027194
+(1 row)
+
+ROLLBACK
+psql:/home/claude/stationary-shop/database/dbms_queries.sql:319: NOTICE:  Sale rejected: Insufficient stock for product 6: available 47, requested 9999
+DO
+BEGIN
+ loyalty_points 
+----------------
+              7
+(1 row)
+
+INSERT 0 1
+INSERT 0 1
+psql:/home/claude/stationary-shop/database/dbms_queries.sql:329: NOTICE:  Payment of 170.00 received for order 30
+INSERT 0 1
+ loyalty_points 
+----------------
+              8
+(1 row)
+
+ROLLBACK
+BEGIN
+ product_id | stock_qty 
+------------+-----------
+          2 |       146
+          5 |       200
+(2 rows)
+
+UPDATE 1
+ product_id | stock_qty 
+------------+-----------
+          2 |       150
+          5 |       202
+(2 rows)
+
+ log_id | product_id | change_qty |     reason     |         logged_at          
+--------+------------+------------+----------------+----------------------------
+     72 |          3 |         10 | Sale Cancelled | 2026-10-25 15:44:13.031313
+     71 |         12 |          3 | Sale Cancelled | 2026-10-25 15:44:13.031313
+     70 |          5 |          2 | Sale Cancelled | 2026-10-25 15:44:13.031313
+     69 |          2 |          4 | Sale Cancelled | 2026-10-25 15:44:13.031313
+(4 rows)
+
+ROLLBACK
+BEGIN
+INSERT 0 1
+INSERT 0 1
+ stock_after_creating_po 
+-------------------------
+                       2
+(1 row)
+
+UPDATE 1
+ stock_after_receiving 
+-----------------------
+                    27
+(1 row)
+
+psql:/home/claude/stationary-shop/database/dbms_queries.sql:359: NOTICE:  Refused: Purchase order 13 is already Received and its status cannot change
+DO
+ stock_still 
+-------------
+          27
+(1 row)
+
+ROLLBACK
+BEGIN
+INSERT 0 1
+INSERT 0 2
+psql:/home/claude/stationary-shop/database/dbms_queries.sql:371: NOTICE:  Payment of 194.75 received for order 31
+INSERT 0 1
+ order_id | order_date |  customer   |  served_by  | gross_amount | discount_percent | net_amount |  status   
+----------+------------+-------------+-------------+--------------+------------------+------------+-----------
+       31 | 2026-10-25 | Rohan Patil | Pooja Desai |       205.00 |             5.00 |     194.75 | Completed
+(1 row)
+
+ROLLBACK
+BEGIN
+UPDATE 1
+   product_name    | is_active 
+-------------------+-----------
+ Steel Ruler 30 cm | f
+(1 row)
+
+ low_stock_after_deactivation 
+------------------------------
+                            2
+(1 row)
+
+ROLLBACK
+BEGIN
+INSERT 0 1
+INSERT 0 1
+psql:/home/claude/stationary-shop/database/dbms_queries.sql:403: NOTICE:  Wrong amount rejected: Payment amount 1.00 does not match the order total 85.00
+psql:/home/claude/stationary-shop/database/dbms_queries.sql:403: NOTICE:  Payment of 85.00 received for order 32
+psql:/home/claude/stationary-shop/database/dbms_queries.sql:403: NOTICE:  Second payment for the same order rejected: duplicate key value violates unique constraint "uq_payments_order"
+psql:/home/claude/stationary-shop/database/dbms_queries.sql:403: NOTICE:  Order 32 cancelled; its stock was returned and its payment stays on record
+DO
+ROLLBACK
+BEGIN
+INSERT 0 1
+psql:/home/claude/stationary-shop/database/dbms_queries.sql:414: NOTICE:  Repeated request key rejected: duplicate key value violates unique constraint "orders_request_key_key"
+DO
+ order_id |    request_key    
+----------+-------------------
+       33 | demo-request-0001
+(1 row)
+
+ROLLBACK
+psql:/home/claude/stationary-shop/database/dbms_queries.sql:424: NOTICE:  Discount above 50 percent rejected: new row for relation "orders" violates check constraint "orders_discount_percent_check"
+DO
+ highest_discount_in_data 
+--------------------------
+                    10.00
+(1 row)
+

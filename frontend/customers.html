@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Customers | Stationary Shop</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/style.css?v=20261026">
+</head>
+<body data-page="customers.html" data-title="Customers">
+<main id="crud-root"></main>
+<script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/crud.js"></script>
+<script>
+
+initCrud({
+  endpoint: '/api/customers', entity: 'Customer', plural: 'Customers', subtitle: 'Regular customers, schools and loyalty points. Walk-in sales need no customer record.',
+  idKey: 'customer_id', nameKey: 'customer_name', searchPlaceholder: 'Search name, phone, email, city',
+  columns: [
+    { key: 'customer_id', label: 'ID' }, { key: 'customer_name', label: 'Customer' }, { key: 'phone', label: 'Phone' }, { key: 'email', label: 'Email' },
+    { key: 'city', label: 'City' }, { key: 'loyalty_points', label: 'Loyalty points', num: true },
+    { key: 'orders_placed', label: 'Orders', num: true }, { key: 'total_spent', label: 'Total spent', num: true, render: r => money(r.total_spent) }
+  ],
+  fields: [
+    { key: 'customer_name', label: 'Customer name', required: true, maxlength: 60 },
+    { key: 'phone', label: 'Phone', type: 'tel', maxlength: 15, pattern: '[0-9+\\- ]{0,15}' },
+    { key: 'email', label: 'Email', type: 'email', maxlength: 80 },
+    { key: 'city', label: 'City', maxlength: 40 }
+  ],
+  rowActions: [{ label: 'Order history', icon: 'bi-clock-history', run: async c => {
+    try {
+      const rows = await api('/api/customers/' + c.customer_id + '/orders');
+      const m = showModal('Order history: ' + c.customer_name, '<div id="oh"></div>', { size: 'modal-lg' });
+      renderTable(m.el.querySelector('#oh'), [
+        { key: 'order_id', label: 'Order' }, { key: 'order_date', label: 'Date', render: r => esc(String(r.order_date).slice(0, 16)) },
+        { key: 'item_count', label: 'Items', num: true }, { key: 'discount_percent', label: 'Discount %', num: true },
+        { key: 'net_amount', label: 'Amount', num: true, render: r => money(r.net_amount) }, { key: 'status', label: 'Status', render: r => badge(r.status) }
+      ], rows, null, 'This customer has not placed any orders yet.');
+    } catch (e) { toast(e.message, 'error'); }
+  } }]
+});
+</script>
+</body>
+</html>

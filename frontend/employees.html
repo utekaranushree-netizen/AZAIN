@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employees | Stationary Shop</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/style.css?v=20261026">
+</head>
+<body data-page="employees.html" data-title="Employees">
+<main id="crud-root"></main>
+<script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/crud.js"></script>
+<script>
+
+initCrud({
+  endpoint: '/api/employees', entity: 'Employee', plural: 'Employees', subtitle: 'Shop staff and the orders they handle.',
+  idKey: 'emp_id', nameKey: 'emp_name', searchPlaceholder: 'Search name or phone',
+  filters: [{ key: 'role', label: 'Role', options: [['Manager', 'Manager'], ['Cashier', 'Cashier'], ['Storekeeper', 'Storekeeper']] }],
+  columns: [
+    { key: 'emp_id', label: 'ID' }, { key: 'emp_name', label: 'Employee' }, { key: 'role', label: 'Role' }, { key: 'phone', label: 'Phone' },
+    { key: 'salary', label: 'Salary', num: true, render: r => r.salary == null ? '' : money(r.salary) }, { key: 'hired_on', label: 'Hired on' },
+    { key: 'orders_handled', label: 'Orders handled', num: true }
+  ],
+  fields: [
+    { key: 'emp_name', label: 'Employee name', required: true, maxlength: 60 },
+    { key: 'role', label: 'Role', type: 'select', required: true, options: [['Manager', 'Manager'], ['Cashier', 'Cashier'], ['Storekeeper', 'Storekeeper']] },
+    { key: 'phone', label: 'Phone', type: 'tel', maxlength: 15, pattern: '[0-9+\\- ]{0,15}' },
+    { key: 'salary', label: 'Salary (₹)', type: 'number', min: 0.01, max: 99999999.99, step: '0.01' },
+    { key: 'hired_on', label: 'Hired on', type: 'date', max: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10) }
+  ]
+});
+</script>
+</body>
+</html>

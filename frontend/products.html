@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Products | Stationary Shop</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/style.css?v=20261026">
+</head>
+<body data-page="products.html" data-title="Products">
+<main id="crud-root"></main>
+<script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/crud.js"></script>
+<script>
+
+initCrud({
+  endpoint: '/api/products', entity: 'Product', plural: 'Products', subtitle: 'Everything the shop sells. Stock changes only through sales and purchase orders.',
+  idKey: 'product_id', nameKey: 'product_name', searchPlaceholder: 'Search product name or brand',
+  filters: [
+    { key: 'category_id', label: 'Category', optionsFrom: '/api/categories', valueKey: 'category_id', labelKey: 'category_name' },
+    { key: 'supplier_id', label: 'Supplier', optionsFrom: '/api/suppliers', valueKey: 'supplier_id', labelKey: 'supplier_name' },
+    { key: 'status', label: 'Status', options: [['active', 'Active'], ['inactive', 'Inactive']] }
+  ],
+  columns: [
+    { key: 'product_id', label: 'ID' }, { key: 'product_name', label: 'Name' }, { key: 'brand', label: 'Brand' },
+    { key: 'category_name', label: 'Category' }, { key: 'supplier_name', label: 'Supplier' },
+    { key: 'cost_price', label: 'Cost', num: true, render: r => money(r.cost_price) }, { key: 'price', label: 'Price', num: true, render: r => money(r.price) },
+    { key: 'stock_qty', label: 'Stock', num: true, render: r => r.stock_qty <= r.reorder_level ? '<b class="text-danger">' + r.stock_qty + '</b>' : r.stock_qty },
+    { key: 'reorder_level', label: 'Reorder at', num: true }, { key: 'is_active', label: 'Status', render: r => badge(r.is_active ? 'Active' : 'Inactive') }
+  ],
+  fields: [
+    { key: 'product_name', label: 'Product name', required: true, maxlength: 80 },
+    { key: 'brand', label: 'Brand', maxlength: 40 },
+    { key: 'category_id', label: 'Category', type: 'select', required: true, numeric: true, optionsFrom: '/api/categories', valueKey: 'category_id', labelKey: 'category_name' },
+    { key: 'supplier_id', label: 'Supplier', type: 'select', numeric: true, optionsFrom: '/api/suppliers', valueKey: 'supplier_id', labelKey: 'supplier_name' },
+    { key: 'cost_price', label: 'Cost price (₹)', type: 'number', required: true, min: 0, max: 99999999.99, step: '0.01' },
+    { key: 'price', label: 'Selling price (₹)', type: 'number', required: true, min: 0, max: 99999999.99, step: '0.01' },
+    { key: 'stock_qty', label: 'Initial stock quantity', type: 'number', min: 0, max: 1000000, step: '1', default: 0, createOnly: true },
+    { key: 'reorder_level', label: 'Reorder level', type: 'number', required: true, min: 0, max: 1000000, step: '1', default: 10 },
+    { key: 'is_active', label: 'Active', type: 'checkbox', default: true, hint: 'Active products can be sold. Untick instead of deleting a product that has history.' }
+  ]
+});
+</script>
+</body>
+</html>

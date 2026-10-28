@@ -1,0 +1,27 @@
+# Build output
+backend/target/
+*.class
+*.log
+# IDE
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+# Secrets / local config
+.env
+*.env
+application-local.properties
+# OS
+.DS_Store
+Thumbs.db
+# Node (only needed if you re-download frontend libraries)
+node_modules/
+
+# Local environment files (never commit credentials)
+.env
+*.env
+!.env.example
+tests/frontend/node_modules/
+tests/frontend/package-lock.json

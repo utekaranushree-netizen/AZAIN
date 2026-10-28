@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Suppliers | Stationary Shop</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/style.css?v=20261026">
+</head>
+<body data-page="suppliers.html" data-title="Suppliers">
+<main id="crud-root"></main>
+<script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/crud.js"></script>
+<script>
+
+initCrud({
+  endpoint: '/api/suppliers', entity: 'Supplier', plural: 'Suppliers', subtitle: 'Companies that supply the shop.',
+  idKey: 'supplier_id', nameKey: 'supplier_name', searchPlaceholder: 'Search name, contact, city, email',
+  columns: [
+    { key: 'supplier_id', label: 'ID' }, { key: 'supplier_name', label: 'Supplier' }, { key: 'contact_person', label: 'Contact person' },
+    { key: 'phone', label: 'Phone' }, { key: 'email', label: 'Email' }, { key: 'city', label: 'City' }, { key: 'product_count', label: 'Products', num: true }
+  ],
+  fields: [
+    { key: 'supplier_name', label: 'Supplier name', required: true, maxlength: 80 },
+    { key: 'contact_person', label: 'Contact person', maxlength: 60 },
+    { key: 'phone', label: 'Phone', type: 'tel', maxlength: 15, pattern: '[0-9+\\- ]{0,15}' },
+    { key: 'email', label: 'Email', type: 'email', maxlength: 80 },
+    { key: 'city', label: 'City', maxlength: 40 }
+  ],
+  rowActions: [{ label: 'Products supplied', icon: 'bi-box-seam', run: async s => {
+    try {
+      const rows = await api('/api/suppliers/' + s.supplier_id + '/products');
+      const m = showModal('Products supplied by ' + s.supplier_name, '<div id="sp"></div>', { size: 'modal-lg' });
+      renderTable(m.el.querySelector('#sp'), [
+        { key: 'product_name', label: 'Product' }, { key: 'brand', label: 'Brand' },
+        { key: 'price', label: 'Price', num: true, render: r => money(r.price) }, { key: 'stock_qty', label: 'Stock', num: true },
+        { key: 'is_active', label: 'Status', render: r => badge(r.is_active ? 'Active' : 'Inactive') }
+      ], rows, null, 'This supplier supplies no products yet.');
+    } catch (e) { toast(e.message, 'error'); }
+  } }]
+});
+</script>
+</body>
+</html>

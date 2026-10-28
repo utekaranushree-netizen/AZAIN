@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Purchase Orders | Stationary Shop</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/style.css?v=20261026">
+</head>
+<body data-page="purchase-orders.html" data-title="Purchase Orders">
+<main>
+  <div class="page-header"><div><h1>Purchase orders</h1><p>Orders placed with suppliers. Stock increases only when the goods are received.</p></div>
+    <button class="btn btn-primary" id="newPo"><i class="bi bi-plus-lg me-1"></i>New purchase order</button></div>
+  <div class="card"><div class="card-body">
+    <div class="row g-2 mb-3"><div class="col-md-3"><select id="pstatus" class="form-select" aria-label="Status"><option value="">Status: all</option><option>Ordered</option><option>Received</option><option>Cancelled</option></select></div></div>
+    <div id="poTable"></div>
+  </div></div>
+</main>
+<script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/purchase-orders.js"></script>
+</body>
+</html>
